@@ -11,10 +11,8 @@ import {
 } from "@mui/material";
 import { Formik, useFormik } from "formik";
 import { useState } from "react";
-import { backend_url, endpoints } from "../assets/json/urls.json"
 import axios from "axios";
 import { AppAuth } from "../config/AppProvider";
-import { backend_url, endpoints } from "../assets/json/urls.json";
 import toast from "react-hot-toast";
  
 export const Forms = () => {
@@ -53,7 +51,7 @@ export const Forms = () => {
     validateOnMount: false,
     onSubmit: async (values) => {
       setLoginLoading(true);
-      const response = await axios.post(backend_url + "/api/login", {
+      const response = await axios.post( "/api/login", {
         email: values.email,
         password: values.email
       })
@@ -64,7 +62,7 @@ export const Forms = () => {
           await new Promise((resolve) => setTimeout(resolve, 1500));
           login(response.data.email);
           break;
-        case 401 || 404:
+        case 404:
           toast.error(response.data);
           break;
       }
