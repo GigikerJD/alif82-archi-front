@@ -1,3 +1,9 @@
+
+show databases;
+
+create database cinemas;
+use cinemas;
+
 -- Create the Acteur table
 CREATE TABLE Acteur (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -16,7 +22,7 @@ CREATE TABLE Movie (
     director VARCHAR(255),
     startingDate DATE,
     endDate DATE,
-    showDay DATE
+    showDay TIME
 );
 
 -- Create the Days table
@@ -28,6 +34,7 @@ CREATE TABLE Days (
 -- Create the Owner table
 CREATE TABLE Owner (
     email VARCHAR(255) PRIMARY KEY,
+    password VARCHAR(255),
     adresse VARCHAR(255),
     lastname VARCHAR(255),
     firstname VARCHAR(255),
