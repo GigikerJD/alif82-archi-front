@@ -32,11 +32,11 @@ INSERT INTO Days (day) VALUES
 ('Dimanche');
 
 -- Insertion de données dans la table Owner
-INSERT INTO Owner (email, password, adresse, lastname, firstname, DOB, movieTheatre) VALUES
-('martin.dupont@cinema.fr', 'hash_password123', '10 rue du Cinéma, Paris', 'Dupont', 'Martin', '1975-05-12', 'Cinéma Paradiso'),
-('julie.durand@cinema.fr', 'hash_password456', '25 avenue des Films, Lyon', 'Durand', 'Julie', '1982-11-08', 'Le Grand Écran'),
-('pierre.laurent@cinema.fr', 'hash_password789', '5 boulevard des Stars, Marseille', 'Laurent', 'Pierre', '1968-03-21', 'CinéVille'),
-('sophie.bernard@cinema.fr', 'hash_password101', '15 rue du Festival, Cannes', 'Bernard', 'Sophie', '1979-07-30', 'Lumière Cinéma');
+INSERT INTO Owner (email, password, adresse, city, lastname, firstname, DOB, movieTheatre) VALUES
+('martin.dupont@cinema.fr', 'hash_password123', '10 rue du Cinéma', 'Paris', 'Dupont', 'Martin', '1975-05-12', 'Cinéma Paradiso'),
+('julie.durand@cinema.fr', 'hash_password456', '25 avenue des Films', 'Lyon', 'Durand', 'Julie', '1982-11-08', 'Le Grand Écran'),
+('pierre.laurent@cinema.fr', 'hash_password789', '5 boulevard des Stars', 'Marseille', 'Laurent', 'Pierre', '1968-03-21', 'CinéVille'),
+('sophie.bernard@cinema.fr', 'hash_password101', '15 rue du Festival', 'Cannes', 'Bernard', 'Sophie', '1979-07-30', 'Lumière Cinéma');
 
 -- Insertion de données dans la table Jouer (acteurs dans les films)
 INSERT INTO Jouer (id_acteur, id_movie) VALUES
