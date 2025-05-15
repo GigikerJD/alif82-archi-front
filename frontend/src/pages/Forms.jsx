@@ -16,7 +16,7 @@ import { AppAuth } from "../config/AppProvider";
 import toast from "react-hot-toast";
  
 export const Forms = () => {
-  const { login } = AppAuth();
+  const { login, backendUrl } = AppAuth();
   const [tabValue, setTabValue] = useState(0);
   const [loginLoading, setLoginLoading] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
@@ -51,7 +51,7 @@ export const Forms = () => {
     validateOnMount: false,
     onSubmit: async (values) => {
       setLoginLoading(true);
-      const response = await axios.post( "/api/login", {
+      const response = await axios.post(backendUrl + "/api/login", {
         email: values.email,
         password: values.email
       })

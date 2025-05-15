@@ -1,15 +1,20 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { AppAuth } from "../config/AppProvider";
 
 export const Studios = () => {
+    const { backendUrl } = AppAuth();
     const [movies, setMovies] = useState(null);
     const [message, setMessage] = useState("");
     const [status, setStatus] = useState(0);
 
     useEffect(() => {
         const fetchMovies = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/mysql_war_exploded/api/movies');
+            const response = await axios.get(backendUrl + '/api/movies', {
+                    validateStatus: (status) =>{
+                        return true
+                    }
+                });
                 const status = response.status;
                 setStatus(status);
 
@@ -23,10 +28,6 @@ export const Studios = () => {
                     default:
                         setMessage("An unexpected error occurred.");
                 }
-            } catch (error) {
-                console.error("Error fetching movies:", error);
-                setMessage("Failed to fetch movies.");
-            }
         };
 
         fetchMovies();
@@ -41,11 +42,6 @@ export const Studios = () => {
             )}
             {status === 404 && (
                 <span>{message}</span>
-            )}
-            {movies === null && (
-                <>
-                    <span>Aucun film à la une !</span>
-                </>
             )}
         </>
     );

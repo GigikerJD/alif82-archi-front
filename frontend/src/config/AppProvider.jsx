@@ -6,12 +6,13 @@ const AppContext = createContext();
 
 export const AppProvider = ({children}) => {
     const cookies = new Cookies();
-    const [user, setUser] = useState(cookies.get("username") || {username: '', type: ''});
+    const [user, setUser] = useState(cookies.get("user") || {email: ''});
     const [isLoggedIn, setIsLoggedIn] = useState(cookies.get("isLoggedIn") || false);
+    const backendUrl = 'http://localhost:8080/mysql_war_exploded/api/'
 
-    async function login(username = ""){
+    async function login(email = ""){
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        cookies.set("username", username, {
+        cookies.set("user", email, {
             path: "/",
             domain: "localhost",
             secure: true,
@@ -23,20 +24,20 @@ export const AppProvider = ({children}) => {
             secure: true,
             httpOnly: false
         });
-        setUser({ username, type });
+        setUser({ email });
         setIsLoggedIn(true);
     }
 
     async function logout(){
         await new Promise((resolve) => setTimeout(resolve, 1000))
-        cookies.remove('username', { path: '/' });
+        cookies.remove('user', { path: '/' });
         cookies.remove('isLoggedIn', { path: '/' });
-        setUser({ username : '', type: '' });
+        setUser({ email : '' });
         setIsLoggedIn(false);
     }
 
     return(
-        <AppContext.Provider value={{ user, isLoggedIn, login, logout}}>
+        <AppContext.Provider value={{ user, isLoggedIn, login, logout, backendUrl }}>
             {children}
         </AppContext.Provider>
     )
