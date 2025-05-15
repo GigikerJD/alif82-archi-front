@@ -13,13 +13,11 @@ import { Formik, useFormik } from "formik";
 import { useState } from "react";
 import axios from "axios";
 import { AppAuth } from "../config/AppProvider";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
  
 export const Forms = () => {
   const { login, backendUrl } = AppAuth();
   const [tabValue, setTabValue] = useState(0);
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [registerLoading, setRegisterLoading] = useState(false);
 
   const registerFormik = useFormik({
     initialValues: {
@@ -30,15 +28,37 @@ export const Forms = () => {
       DOB: "",
       movieTheatre: "",
       adresse: "",
+      city: "",
     },
     validateOnBlur: false,
     validateOnMount: false,
     onSubmit: async (values) => {
-      setRegisterLoading(true);
-      alert(JSON.stringify(values, null, 2));
-      setTimeout(() => {
-        setRegisterLoading(false);
-      }, 2000);
+      const response = await axios.post(backendUrl + "register", {
+        values
+      }, {
+        validateStatus: (status) => {
+          return true;
+        }
+      }
+    );
+      const type = response.data.type;
+      switch(type){
+        case "error":
+          toast.error(response.data.message, {
+            duration: 1000,
+            style:{
+              backgroundColor: 'black',
+              color: 'white'
+            }
+          });
+          break;
+        case "success":
+          toast.success(response.data.message, {
+            duration: 1000
+          });
+          login(values.email);
+          break;
+      }
     },
   });
 
@@ -50,25 +70,25 @@ export const Forms = () => {
     validateOnBlur: false,
     validateOnMount: false,
     onSubmit: async (values) => {
-      setLoginLoading(true);
-      const response = await axios.post(backendUrl + "/api/login", {
+      const response = await axios.post(backendUrl + "login", {
         email: values.email,
-        password: values.email
-      })
-      const status = response.status;
-      switch(status){
-        case 200:
-          toast.success(response.data.message)
-          await new Promise((resolve) => setTimeout(resolve, 1500));
-          login(response.data.email);
+        password: values.password
+      }, {
+        validateStatus: (status) => {
+          return true;
+        }
+      });
+      console.log(response.data);
+      const type = response.data.type;
+      switch(type){
+        case "error":
+          toast.error(response.data.message);
           break;
-        case 404:
-          toast.error(response.data);
+        case "success":
+          toast.success(response.data.message);
+          login(values.email);
           break;
       }
-
-      alert(JSON.stringify(values, null, 2));
-      login("");
     },
   });
 
@@ -82,7 +102,7 @@ export const Forms = () => {
         <Tab label="Se connecter" />
         <Tab label="S'inscrire" />
       </Tabs>
-
+      <Toaster position="top-right" reverseOrder={true} />
       {tabValue === 0 && (
         <Box
           display="flex"
@@ -105,7 +125,6 @@ export const Forms = () => {
             onSubmit={loginFormik.handleSubmit}
           >
             <TextField
-              type="email"
               name="email"
               label="Email"
               size="small"
@@ -130,7 +149,6 @@ export const Forms = () => {
               type="submit"
               variant="contained"
               color="success"
-              disabled={loginLoading}
               startIcon={<Outbound />}
               sx={{
                 mt: 3,
@@ -139,7 +157,7 @@ export const Forms = () => {
                 letterSpacing: 0,
               }}
             >
-              {loginLoading ? "Chargement..." : "Se connecter"}
+              Se connecter
             </Button>
           </Box>
         </Box>
@@ -236,21 +254,37 @@ export const Forms = () => {
               value={registerFormik.values.movieTheatre}
             />
 
-            <TextField
-              type="text"
-              name="adresse"
-              size="small"
-              label="Adresse"
-              fullWidth
-              onChange={registerFormik.handleChange}
-              value={registerFormik.values.adresse}
-            />
+            <Box
+              sx={{
+                width: '100%',
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                justifyContent: "space-between",
+                rowGap: 3,
+                columnGap: 2
+              }}
+            >
+              <TextField
+                name="adresse"
+                label="Adresse"
+                size="small"
+                onChange={registerFormik.handleChange}
+                value={registerFormik.values.adresse}
+                sx={{ width: { md: '60%'}, borderRadius: 10 }}
+              />
+              <TextField
+                name="city"
+                label="Ville"
+                size="small"
+                onChange={registerFormik.handleChange}
+                value={registerFormik.values.city}
+              />
+            </Box>
 
             <Button
               type="submit"
               variant="contained"
               color="success"
-              disabled={registerLoading}
               startIcon={<Outbound />}
               sx={{
                 mt: 3,
@@ -259,7 +293,7 @@ export const Forms = () => {
                 letterSpacing: 0,
               }}
             >
-              {registerLoading ? "Chargement..." : "S'inscrire"}
+              s'inscrire
             </Button>
           </Box>
         </Box>
