@@ -6,32 +6,32 @@ const AppContext = createContext();
 
 export const AppProvider = ({children}) => {
     const cookies = new Cookies();
-    const [user, setUser] = useState(cookies.get("user") || {email: ''});
+    const [user, setUser] = useState(cookies.get("user") || "");
     const [isLoggedIn, setIsLoggedIn] = useState(cookies.get("isLoggedIn") || false);
     const backendUrl = 'http://localhost:8080/mysql_war_exploded/api/'
 
     async function login(email = ""){
+        setUser(email);
         cookies.set("user", email, {
             path: "/",
             domain: "localhost",
-            secure: true,
+            secure: false,
             httpOnly: false
         });
         cookies.set("isLoggedIn", true, {
             path: "/",
             domain: "localhost",
-            secure: true,
+            secure: false,
             httpOnly: false
         });
         await new Promise((resolve) => setTimeout(resolve, 2000))
-        setUser({ email: email });
         setIsLoggedIn(true);
     }
 
     async function logout(){
-        cookies.remove('user', { path: '/' });
-        cookies.remove('isLoggedIn', { path: '/' });
-        // await new Promise((resolve) => setTimeout(resolve, 2000))
+        cookies.remove('user', { path: '/', domain: 'localhost' });
+        cookies.remove('isLoggedIn', { path: '/', domain: 'localhost' });
+        await new Promise((resolve) => setTimeout(resolve, 2000))
         setUser({ email : '' });
         setIsLoggedIn(false);
     }
