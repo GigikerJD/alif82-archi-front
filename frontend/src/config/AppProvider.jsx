@@ -11,7 +11,6 @@ export const AppProvider = ({children}) => {
     const backendUrl = 'http://localhost:8080/mysql_war_exploded/api/'
 
     async function login(email = ""){
-        await new Promise((resolve) => setTimeout(resolve, 2000))
         cookies.set("user", email, {
             path: "/",
             domain: "localhost",
@@ -24,14 +23,15 @@ export const AppProvider = ({children}) => {
             secure: true,
             httpOnly: false
         });
-        setUser({ email });
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        setUser({ email: email });
         setIsLoggedIn(true);
     }
 
     async function logout(){
-        await new Promise((resolve) => setTimeout(resolve, 2000))
         cookies.remove('user', { path: '/' });
         cookies.remove('isLoggedIn', { path: '/' });
+        // await new Promise((resolve) => setTimeout(resolve, 2000))
         setUser({ email : '' });
         setIsLoggedIn(false);
     }

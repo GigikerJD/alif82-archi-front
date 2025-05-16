@@ -6,6 +6,7 @@ import { Forms } from "../pages/Forms";
 import { Settings } from "../pages/Settings";
 import { Studios } from "../pages/Studios";
 import { News } from "../pages/News";
+import { Movie } from "../pages/Movie";
 
 const ProtectedRoute = ({ children, endpoint }) => {
   const { isLoggedIn } = AppAuth();
@@ -49,7 +50,12 @@ const AppRouter = () => {
       />
 
       <Route
-        path="/"
+        path="/movie/:title"
+        element={
+          <PublicRoute endpoint="/dashboard">
+            <Movie/>
+          </PublicRoute>
+        }
       />
 
       <Route
