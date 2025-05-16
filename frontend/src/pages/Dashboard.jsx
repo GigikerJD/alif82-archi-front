@@ -17,15 +17,12 @@ import {
   Alert,
 } from "@mui/material";
 import { Add as AddIcon, Movie as MovieIcon, Close as CloseIcon } from "@mui/icons-material";
-import { useLocation, useNavigate } from "react-router-dom";
 import { AppAuth } from "../config/AppProvider";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 export const Dashboard = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { logout, backendUrl, user } = AppAuth();
+  const { backendUrl, user } = AppAuth();
   
   // États pour les films et les données
   const [movies, setMovies] = useState([]);
@@ -50,7 +47,7 @@ export const Dashboard = () => {
     showDay: '',
     acteurs: [],
     days: [],
-    emailOwner: user.email,
+    emailOwner: user,
   });
 
   // Gérer les changements dans les champs du formulaire
@@ -95,10 +92,12 @@ export const Dashboard = () => {
         showDay: formData.showDay || null,
         acteurs: formData.acteurs,
         days: formData.days,
-        emailOwner: user.email,
+        emailOwner: user,
       };
 
-      const response = await axios.post(`${backendUrl}movies`, movieData);
+      const response = await axios.post(`${backendUrl}movies`, movieData, {
+        validateStatus: (status) => { return true; }
+      });
       
       if (response.data.type === 'success') {
         setAlert({ show: true, message: 'Film ajouté avec succès!', severity: 'success' });
@@ -131,14 +130,16 @@ export const Dashboard = () => {
       showDay: '',
       acteurs: [],
       days: [],
-      emailOwner: user.email,
+      emailOwner: user || '',
     });
   };
 
   // Récupérer les films de l'utilisateur
   const fetchMovies = async () => {
     try {
-      const response = await axios.get(`${backendUrl}owners/${user.email}/movies`);
+      const response = await axios.get(`${backendUrl}owners/${user}/movies`, {
+        validateStatus: (status) => { return true; }
+      });
       
       // Les films sont dans response.data.moviesDetails selon l'endpoint
       if (response.data.type === 'success') {
@@ -150,16 +151,17 @@ export const Dashboard = () => {
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des films:', error);
-      setMovies([]); // En cas d'erreur, afficher une liste vide
+      setMovies([]);
     }
   };
 
   // Récupérer les acteurs disponibles
   const fetchActeurs = async () => {
     try {
-      const response = await axios.get(`${backendUrl}actors`);
+      const response = await axios.get(`${backendUrl}actors`, {
+        validateStatus: (status) => { return true; }
+      });
       
-      // Les acteurs sont dans response.data.actors selon l'endpoint
       if (response.data.type === 'success') {
         setActeurs(response.data.actors);
       } else {
@@ -174,9 +176,10 @@ export const Dashboard = () => {
   // Récupérer les jours disponibles
   const fetchDays = async () => {
     try {
-      const response = await axios.get(`${backendUrl}days`);
+      const response = await axios.get(`${backendUrl}days`, {
+        validateStatus: (status) => { return true; }
+      });
       
-      // Les jours sont dans response.data.days selon l'endpoint
       if (response.data.days) {
         setDays(response.data.days);
       } else {
@@ -189,12 +192,12 @@ export const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (user.email) {
+    if (user) {
       fetchMovies();
       fetchActeurs();
       fetchDays();
     }
-  }, [user.email]);
+  }, [user]);
 
   const handleCloseAlert = () => {
     setAlert({ ...alert, show: false });
@@ -207,7 +210,10 @@ export const Dashboard = () => {
 
   return (
     <>
-      <Container fixed>
+      <Container 
+        fixed
+        sx={{ mt: 8 }}
+      >
         {/* Alert */}
         {alert.show && (
           <Alert 
@@ -237,7 +243,7 @@ export const Dashboard = () => {
         {/* Liste des films */}
         <Grid container spacing={3}>
           {movies.length === 0 ? (
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Paper sx={{ p: 4, textAlign: 'center' }}>
                 <MovieIcon sx={{ fontSize: 64, color: 'grey.400', mb: 2 }} />
                 <Typography variant="h6" color="text.secondary">
@@ -302,7 +308,7 @@ export const Dashboard = () => {
             boxShadow: 24,
             borderRadius: 2,
             p: 0,
-            maxHeight: '90vh',
+            maxHeight: '60vh',
             overflow: 'auto'
           }}>
             <Box sx={{ p: 3, borderBottom: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -317,11 +323,12 @@ export const Dashboard = () => {
             <Box component="form" onSubmit={handleSubmit} sx={{ p: 3 }}>
               <Grid container spacing={2}>
                 {/* Titre */}
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     fullWidth
                     required
                     name="title"
+                    size="small"
                     label="Titre du film"
                     value={formData.title}
                     onChange={handleInputChange}
@@ -335,6 +342,7 @@ export const Dashboard = () => {
                     name="duration"
                     label="Durée (minutes)"
                     type="number"
+                    size="small"
                     value={formData.duration}
                     onChange={handleInputChange}
                   />
@@ -345,6 +353,7 @@ export const Dashboard = () => {
                     name="minimumAge"
                     label="Âge minimum"
                     type="number"
+                    size="small"
                     value={formData.minimumAge}
                     onChange={handleInputChange}
                   />
@@ -356,6 +365,7 @@ export const Dashboard = () => {
                     fullWidth
                     required
                     name="director"
+                    size="small"
                     label="Réalisateur"
                     value={formData.director}
                     onChange={handleInputChange}
@@ -368,15 +378,17 @@ export const Dashboard = () => {
                     fullWidth
                     required
                     name="language"
+                    size="small"
                     label="Langue"
                     value={formData.language}
                     onChange={handleInputChange}
                   />
                 </Grid>
-                <Grid size={6 }>
+                <Grid size={6}>
                   <TextField
                     fullWidth
                     name="subtitles"
+                    size="small"
                     label="Sous-titres"
                     value={formData.subtitles}
                     onChange={handleInputChange}
@@ -390,8 +402,10 @@ export const Dashboard = () => {
                     name="startingDate"
                     label="Date de début"
                     type="date"
+                    size="small"
                     value={formData.startingDate}
                     onChange={handleInputChange}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
                 <Grid size={6}>
@@ -400,6 +414,7 @@ export const Dashboard = () => {
                     name="endDate"
                     label="Date de fin"
                     type="date"
+                    size="small"
                     value={formData.endDate}
                     onChange={handleInputChange}
                     InputLabelProps={{ shrink: true }}
@@ -413,6 +428,7 @@ export const Dashboard = () => {
                     name="showDay"
                     label="Heure de diffusion"
                     type="time"
+                    size="small"
                     value={formData.showDay}
                     onChange={handleInputChange}
                   />
@@ -422,13 +438,13 @@ export const Dashboard = () => {
                 <Grid size={12}>
                   <Autocomplete
                     multiple
+                    size="small"
                     options={acteurs}
                     getOptionLabel={(option) => `${option.firstname} ${option.lastname}`}
                     value={formData.acteurs}
                     onChange={(event, newValue) => {
                       setFormData(prev => ({ ...prev, acteurs: newValue }));
                     }}
-
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -443,6 +459,7 @@ export const Dashboard = () => {
                 <Grid size={12}>
                   <Autocomplete
                     multiple
+                    size="small"
                     options={days}
                     getOptionLabel={(option) => option.day}
                     value={formData.days}
@@ -463,6 +480,7 @@ export const Dashboard = () => {
                 <Grid size={12}>
                   <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                     <Button
+                    size="small"
                       variant="outlined"
                       onClick={handleCloseModal}
                       disabled={loading}
