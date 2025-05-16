@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { AppAuth } from "../config/AppProvider";
 
-export const Studios = () => {
+const Studios = () => {
   const { backendUrl } = AppAuth();
   const [movies, setMovies] = useState(null);
   const [message, setMessage] = useState("");
@@ -40,3 +40,5 @@ export const Studios = () => {
     </>
   );
 };
+
+export default Studios;

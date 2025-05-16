@@ -1,9 +1,11 @@
 
 
-export const Settings = () => {
+const Settings = () => {
     return(
         <>
             
         </>
     )
 }
+
+export default Settings;

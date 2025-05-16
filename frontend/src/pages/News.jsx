@@ -1,9 +1,0 @@
-
-
-export const News = () => {
-    return(
-        <>
-            
-        </>
-    )
-}

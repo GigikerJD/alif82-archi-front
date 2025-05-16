@@ -15,7 +15,7 @@ import axios from "axios";
 import { AppAuth } from "../config/AppProvider";
 import toast, { Toaster } from "react-hot-toast";
  
-export const Forms = () => {
+const Forms = () => {
   const { login, backendUrl } = AppAuth();
   const [tabValue, setTabValue] = useState(0);
 
@@ -44,18 +44,10 @@ export const Forms = () => {
       const type = response.data.type;
       switch(type){
         case "error":
-          toast.error(response.data.message, {
-            duration: 1000,
-            style:{
-              backgroundColor: 'black',
-              color: 'white'
-            }
-          });
+          toast.error(response.data.message);
           break;
         case "success":
-          toast.success(response.data.message, {
-            duration: 1000
-          });
+          toast.success(response.data.message);
           login(values.email);
           break;
       }
@@ -301,3 +293,5 @@ export const Forms = () => {
     </Container>
   );
 };
+
+export default Forms;
