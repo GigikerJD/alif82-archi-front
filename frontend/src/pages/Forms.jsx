@@ -15,7 +15,7 @@ import axios from "axios";
 import { AppAuth } from "../config/AppProvider";
 import toast, { Toaster } from "react-hot-toast";
  
-const Forms = () => {
+export const Forms = () => {
   const { login, backendUrl } = AppAuth();
   const [tabValue, setTabValue] = useState(0);
 
@@ -293,5 +293,3 @@ const Forms = () => {
     </Container>
   );
 };
-
-export default Forms;

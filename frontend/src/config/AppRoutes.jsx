@@ -5,7 +5,6 @@ import { Dashboard } from "../pages/Dashboard";
 import { Forms } from "../pages/Forms";
 import { Settings } from "../pages/Settings";
 import { Studios } from "../pages/Studios";
-import { News } from "../pages/News";
 import { Movie } from "../pages/Movie";
 
 const ProtectedRoute = ({ children, endpoint }) => {
@@ -36,15 +35,6 @@ const AppRouter = () => {
         element={
           <PublicRoute endpoint="/dashboard">
             <Studios/>
-          </PublicRoute>
-        }
-      />
-
-      <Route
-        path="/news"
-        element={
-          <PublicRoute endpoint="/dashboard">
-            <News/>
           </PublicRoute>
         }
       />

@@ -40,13 +40,6 @@ export const DefaultHeader = () => {
           </Link>
           <Link
             underline="none"
-            href="/news"
-            sx={{ color: "inherit", fontSize: 20, fontWeight: 700 }}
-          >
-            À la une
-          </Link>
-          <Link
-            underline="none"
             href="/studios"
             sx={{ color: "inherit", fontSize: 20, fontWeight: 700 }}
           >
