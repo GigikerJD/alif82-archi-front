@@ -2,38 +2,66 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { AppAuth } from "../config/AppProvider";
 import { Autocomplete, TextField, Card, CardContent, CardMedia, Grid, Typography, Container } from "@mui/material";
+import defaultMovieImage from "../assets/images/Inception.webp";
 
 export const Studios = () => {
   const { backendUrl } = AppAuth();
   const [movies, setMovies] = useState([]);
   const [city, setCity] = useState("");
-  const [cities, setCities] = useState(["Paris", "Lyon", "Marseille", "Toulouse"]); // Exemple de villes
+  const [cities, setCities] = useState([]); // Villes dynamiques depuis l'API
+
+  // Charger les villes depuis l'API au chargement du composant
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}cities`);
+        if (response.data.type === "success") {
+          setCities(response.data.cities);
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+        // Fallback avec des villes par défaut en cas d'erreur
+        setCities(["Paris", "Lyon", "Marseille", "Toulouse"]);
+      }
+    };
+
+    fetchCities();
+  }, [backendUrl]);
 
   useEffect(() => {
     if (city) {
       const fetchMovies = async () => {
         try {
-          const response = await axios.get(`${backendUrl}movies/city?name=${city}`);
-          setMovies(response.data.movies);
+          const response = await axios.get(`${backendUrl}movies/city?name=${city}`, {
+            validateStatus: (status) => { return true; }
+          });
+          if (response.data.type === "success") {
+            setMovies(response.data.movies);
+          } else {
+            setMovies([]);
+          }
         } catch (error) {
           console.error("Error fetching movies:", error);
+          setMovies([]);
         }
       };
 
       fetchMovies();
+    } else {
+      setMovies([]);
     }
   }, [city, backendUrl]);
 
   const getMovieImagePath = (title) => {
-      try {
-        const formattedTitle = title.replace(/\s+/g, " ").trim();
-        return new URL(`../assets/images/${formattedTitle}.webp`, import.meta.url)
-          .href;
-      } catch (error) {
-        console.error(`Error loading image for ${title}:`, error);
-        return defaultMovieImage;
-      }
-    };
+    try {
+      const formattedTitle = title.replace(/\s+/g, " ").trim();
+      return new URL(`../assets/images/${formattedTitle}.webp`, import.meta.url)
+        .href;
+    } catch (error) {
+      console.error(`Error loading image for ${title}:`, error);
+      return defaultMovieImage;
+    }
+  };
 
   return (
     <Container>
@@ -44,8 +72,15 @@ export const Studios = () => {
         onChange={(event, newValue) => {
           setCity(newValue);
         }}
+        value={city}
         style={{ margin: "20px 0" }}
       />
+
+      {city && movies.length === 0 && (
+        <Typography variant="h6" color="text.secondary" style={{ textAlign: "center", marginTop: "20px" }}>
+          No movies found in {city}
+        </Typography>
+      )}
 
       <Grid container spacing={4}>
         {movies.map((movie, index) => (
@@ -54,7 +89,7 @@ export const Studios = () => {
               <CardMedia
                 component="img"
                 height="140"
-                image={getMovieImagePath(movie.title)} // Remplacez par le chemin de l'image du film
+                image={getMovieImagePath(movie.title)}
                 alt={movie.title}
               />
               <CardContent>
